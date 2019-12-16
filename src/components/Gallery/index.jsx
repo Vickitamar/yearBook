@@ -1,21 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import styled, { css } from "styled-components";
-import Books from "../Books";
-import Header from "../Header";
+import React, { Component } from "react";
+import styled from "styled-components";
+import VickiModal from "../Modal/vickiModal";
 
 const PhotoGrid = styled.div`
   display: grid;
+  margin-top: 550px;
   grid-template-columns: repeat(3, 305px);
   justify-content: center;
-  gap: 20px;
-  grid-auto-rows: 305px;
-  ${({ cascade }) =>
-    cascade &&
-    css`
-      grid-auto-rows: 200px;
-      grid-gap: 5px;
-    `}
+  gap: 60px;
+  grid-auto-rows: 450px;
   @media (max-width: 990px) {
     gap: 5px;
     grid-template-columns: repeat(3, 1fr);
@@ -23,70 +16,75 @@ const PhotoGrid = styled.div`
   }
 `;
 
-const LinkGrid = styled.div`
-  display: grid;
-  grid-template-columns: auto auto;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
-`;
-
-const TabLink = styled(Link)`
-  text-decoration: none;
-  color: #ccc;
-  text-transform: uppercase;
-  letter-spacing: 3px;
-  ${({ selected }) => selected && "color: black;"}
-`;
-
-const ImageLink = styled(Link)`
-  background: no-repeat center/150% url(/img/${({ index }) => index}.jpeg);
+const BookOverview = styled.div`
+  background-color: hotPink;
+  cursor: pointer;
   :hover {
     opacity: 0.7;
   }
-  ${({ cascade }) =>
-    cascade &&
-    css`
-      background-size: cover;
-      &:nth-of-type(2n) {
-        grid-row-start: span 2;
-      }
-    `}
 `;
+class Gallery extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { selectedBook: null };
+  }
 
-export function Gallery({ match, location }) {
-  const cascade = location.search === "?type=cascade";
-  return (
-    <div>
-      <Header />
-      <LinkGrid>
-        <TabLink
-          selected={!cascade}
-          to={{ pathname: `${match.url}`, search: "?type=square" }}
-        >
-          square
-        </TabLink>
-        <TabLink
-          selected={cascade}
-          to={{ pathname: `${match.url}`, search: "?type=cascade" }}
-        >
-          cascade
-        </TabLink>
-      </LinkGrid>
-      <PhotoGrid cascade={cascade}>
-        {Books.map(i => (
-          <ImageLink
-            cascade={cascade}
-            key={i.id}
-            index={i.id}
-            to={{
-              pathname: `/img/${i.id}`,
-              // this is the trick!
-              state: { modal: true }
-            }}
-          />
-        ))}
-      </PhotoGrid>
-    </div>
-  );
+  componentDidMount() {
+    const { listBooks } = this.props;
+    listBooks();
+  }
+
+  handleSelectBook = book => {
+    this.setState({ selectedBook: book });
+  };
+
+  handleModalClose = () => {
+    this.setState({ selectedBook: null });
+  };
+
+  // handleCoverImage(isbn) {
+  //   fetch(
+  //     "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
+  //       isbn +
+  //       "&key=AIzaSyDU-r9npVDCl1pI5Cym_oVc6444TZcdZNI",
+  //     { method: "get" }
+  //   )
+  //     .then(response => {
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       const img = data.items[0].volumeInfo.imageLinks.thumbnail;
+  //       console.log(img);
+  //     });
+  // }
+
+  render() {
+    const { books, isLoading } = this.props;
+
+    return (
+      <div>
+        {isLoading && <div>is loading</div>}
+
+        {!isLoading && books && books.length && (
+          <PhotoGrid>
+            {books.map(book => (
+              <BookOverview
+                key={book.title}
+                onClick={() => this.handleSelectBook(book)}
+              >
+                {book.title}
+                <img src={book.img} alt="book cover" />
+              </BookOverview>
+            ))}
+          </PhotoGrid>
+        )}
+        <VickiModal
+          selectedBook={this.state.selectedBook}
+          close={this.handleModalClose}
+        />
+      </div>
+    );
+  }
 }
+
+export default Gallery;

@@ -1,5 +1,8 @@
 body {
   margin: 0;
+  background-image: url("/img/border.png");
+  background-repeat: no-repeat;
+
   font-family: "Special Elite", cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -8,4 +11,11 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
+}
+
+.backdrop {
+  background: red;
+  height: 100vh;
+
+  transition: 2s all ease-in;
 }
