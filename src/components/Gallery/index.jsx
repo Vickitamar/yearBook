@@ -42,22 +42,6 @@ class Gallery extends Component {
     this.setState({ selectedBook: null });
   };
 
-  // handleCoverImage(isbn) {
-  //   fetch(
-  //     "https://www.googleapis.com/books/v1/volumes?q=isbn:" +
-  //       isbn +
-  //       "&key=AIzaSyDU-r9npVDCl1pI5Cym_oVc6444TZcdZNI",
-  //     { method: "get" }
-  //   )
-  //     .then(response => {
-  //       return response.json();
-  //     })
-  //     .then(data => {
-  //       const img = data.items[0].volumeInfo.imageLinks.thumbnail;
-  //       console.log(img);
-  //     });
-  // }
-
   render() {
     const { books, isLoading } = this.props;
 
